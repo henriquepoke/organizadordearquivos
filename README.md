@@ -5,7 +5,7 @@ Um organizador de arquivos automático simples
 1. main.py - arquivo com o código principal feito em Python;
 2. pastas - destino final dos arquivos;
 3. organizador - pasta inicial dos arquivos a serem organizados;
-4. registro.log - log mostrando os arq  uivos e os horários em que foram movidos.
+4. registro.log - log mostrando os arquivos e os horários em que foram movidos.
 
 **Observações:**
 1. Ainda estou melhorando a lógica dele, então só é aceito alguns formatos: pdf, docx, xlsx, png, jpg e txt
