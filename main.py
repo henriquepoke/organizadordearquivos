@@ -1,93 +1,34 @@
 from pathlib import Path
-import shutil
 from datetime import datetime
+import shutil
 
-agora = datetime.now()
+pasta_organizada = Path("arquivos_organizados")
 
-organizador = Path('organizador')
-registro = Path('registro.log')
+pasta_organizador = Path('organizador')
+if not pasta_organizador.exists():
+    pasta_organizador.mkdir()
+    print(f'Pasta {pasta_organizador} criada com sucesso! Mova os arquivos aqui para organizar.')
+    
+arquivo_log = Path('registro.log')
 
-arquivosMovidos = dict()
-logList = list()
+arquivos_qtd = 0
+extensoes_encontradas = []
 
-for arquivo in organizador.iterdir():
-    match arquivo.suffix:
-        case '.png':
-            pngDir = Path('pastas/png')
-            if pngDir.exists():
-                print('.png,', end=' ')
-                shutil.move(arquivo, pngDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%H horas e %m minutos do dia %d do mes %m do ano %Y')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                pngDir.mkdir()
-        case '.jpg':
-            JpgDir = Path('pastas/jpg')
-            if JpgDir.exists():
-                print('.jpg,', end= ' ')
-                shutil.move(arquivo, JpgDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%H horas e %m minutos do dia %d do mes %m do ano %Y')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                JpgDir.mkdir()
-        case '.pdf':
-            pdfDir = Path('pastas/pdf')
-            if pdfDir.exists():
-                print('.pdf,', end= ' ')
-                shutil.move(arquivo, pdfDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%H horas e %m minutos do dia %d do mes %m do ano %Y')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                pdfDir.mkdir()
-        case '.docx':
-            docxDir = Path('pastas/docx')
-            if docxDir.exists():
-                print('.docx,', end= ' ')
-                shutil.move(arquivo, docxDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%H horas e %m minutos do dia %d do mes %m do ano %Y')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                docxDir.mkdir()
-        case '.xlsx':
-            xlsxDir = Path('pastas/xlsx')
-            if xlsxDir.exists():
-                print('.xlsx,', end= ' ')
-                shutil.move(arquivo, xlsxDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%H horas e %m minutos do dia %d do mes %m do ano %Y')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                xlsxDir.mkdir()
-        case '.txt':
-            txtDir = Path('pastas/txt')
-            if txtDir.exists():
-                print('e .txt', end= ' ')
-                shutil.move(arquivo, txtDir)
-                arquivosMovidos = {
-                    'arquivo': arquivo.name,
-                    'horário': agora.strftime('%d/%m/%Y %H:%M')
-                }
-                logList.append(arquivosMovidos)
-            else:
-                txtDir.mkdir()
-print('existem...')
-print(logList)
+for arquivo in Path('organizador').iterdir():
+    arquivos_qtd += 1
+    extensao = arquivo.suffix[1:]
+    if extensao not in extensoes_encontradas:
+        extensoes_encontradas.append(extensao)
+    sub_pasta = pasta_organizada/extensao
+    if not sub_pasta.exists():
+        sub_pasta.mkdir(exist_ok=True, parents=True)
 
-with open('registro.log', 'a', encoding='utf-8') as arquivo:
-    for log in logList:
-        linha = f"[INFO] {log['arquivo']} movido | Horário: {log['horário']}\n"
-        arquivo.write(linha)
+    shutil.move(arquivo, sub_pasta/arquivo.name)
+    with open(arquivo_log, 'a', encoding='utf-8') as log:
+        agora = datetime.now()
+        log.write(agora.strftime(f'[INFO] %d/%m/%Y %H:%M:%S Movido o arquivo {arquivo.name} para a pasta {sub_pasta}\n'))
+    
+print(f'{arquivos_qtd} arquivos organizados com sucesso!\n')
+print('Extensões encontradas:')
+for extensao in extensoes_encontradas:
+    print(extensao, end=' ')
